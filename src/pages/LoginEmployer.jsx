@@ -21,7 +21,7 @@ const LoginEmployer = () => {
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post('http://localhost:5001/api/auth/login/employer', formData);
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/login/employer`, formData);
             localStorage.setItem('token', res.data.token);
             localStorage.setItem('userType', 'employer');
             navigate('/employer/dashboard');
@@ -34,7 +34,7 @@ const LoginEmployer = () => {
     const handleRegister = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post('http://localhost:5001/api/auth/register/employer', registerData);
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/register/employer`, registerData);
             localStorage.setItem('token', res.data.token);
             localStorage.setItem('userType', 'employer');
             navigate('/employer/dashboard');

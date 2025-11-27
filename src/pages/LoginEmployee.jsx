@@ -12,7 +12,7 @@ const LoginEmployee = () => {
     const handleSendOtp = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:5001/api/auth/login/employee', { phone });
+            await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/login/employee`, { phone });
             setStep(2);
         } catch (err) {
             console.error(err);
@@ -23,7 +23,7 @@ const LoginEmployee = () => {
     const handleVerifyOtp = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post('http://localhost:5001/api/auth/verify-otp', { phone, otp });
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/verify-otp`, { phone, otp });
             localStorage.setItem('token', res.data.token);
             localStorage.setItem('userType', 'employee');
             navigate('/employee/dashboard');

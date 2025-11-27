@@ -165,7 +165,7 @@ const Home = () => {
     useEffect(() => {
         const fetchJobs = async () => {
             try {
-                const res = await axios.get('http://localhost:5001/api/jobs');
+                const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/jobs`);
                 setJobs(res.data.slice(0, 6)); // Show top 6 jobs
             } catch (err) {
                 console.error(err);
@@ -343,7 +343,7 @@ const Home = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {jobs.length > 0 ? (
                             jobs.slice(0, 6).map((job, index) => (
-                                <div key={job._id || index} className="bg-white rounded-xl p-6 border border-gray-100 hover:shadow-lg transition-all group relative">
+                                <Link to={`/jobs/${job._id}`} key={job._id || index} className="block bg-white rounded-xl p-6 border border-gray-100 hover:shadow-lg transition-all group relative">
                                     <div className="flex items-start gap-4">
                                         <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-xl flex-shrink-0 ${['bg-blue-600', 'bg-pink-500', 'bg-green-500', 'bg-black', 'bg-red-500', 'bg-orange-500'][index % 6]}`}>
                                             {job.employer?.company?.name?.charAt(0) || 'C'}
@@ -374,7 +374,7 @@ const Home = () => {
                                             {job.salary ? `$${job.salary}` : 'Negotiable'}
                                         </span>
                                     </div>
-                                </div>
+                                </Link>
                             ))
                         ) : (
                             <div className="col-span-3 text-center py-10 text-gray-500">

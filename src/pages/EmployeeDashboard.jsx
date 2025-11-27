@@ -177,7 +177,7 @@ const FilterSidebar = () => {
 
 const JobCard = ({ job }) => {
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow cursor-pointer group">
+        <Link to={`/jobs/${job._id}`} className="block bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow cursor-pointer group">
             <div className="flex justify-between items-start mb-4">
                 <div className="flex gap-4">
                     <div className="w-12 h-12 rounded-lg border border-gray-100 p-1 flex items-center justify-center bg-white shadow-sm">
@@ -216,7 +216,7 @@ const JobCard = ({ job }) => {
                     <MessageSquare className="w-3 h-3" /> Good (Intermediate / Advanced)
                 </span>
             </div>
-        </div>
+        </Link>
     );
 };
 
@@ -231,10 +231,10 @@ const EmployeeDashboard = () => {
                 const token = localStorage.getItem('token');
                 const config = { headers: { 'x-auth-token': token } };
 
-                const userRes = await axios.get('http://localhost:5001/api/users/me', config);
+                const userRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/users/me`, config);
                 setUser(userRes.data);
 
-                const jobsRes = await axios.get('http://localhost:5001/api/jobs');
+                const jobsRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/jobs`);
                 setJobs(jobsRes.data);
 
                 setLoading(false);
