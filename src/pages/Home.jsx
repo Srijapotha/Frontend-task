@@ -7,25 +7,25 @@ import { Search, MapPin, Briefcase, User, ChevronDown, Bookmark, Code, UserCheck
 const TestimonialCard = ({ testimonial, isActive }) => {
     return (
         <div
-            className={`w-full bg-white rounded-xl p-8 relative transition-all duration-700 flex-shrink-0 mx-4 ${isActive ? 'shadow-2xl border-b-4 border-blue-600 scale-105 z-10 opacity-100' : 'shadow-sm border border-gray-100 hover:shadow-md scale-90 opacity-50 blur-[1px]'}`}
+            className={`w-full bg-white rounded-lg sm:rounded-xl p-3 sm:p-6 md:p-8 relative transition-all duration-700 flex-shrink-0 ${isActive ? 'shadow-2xl border-b-4 border-blue-600 md:scale-105 z-10 opacity-100' : 'shadow-sm border border-gray-100 hover:shadow-md md:scale-90 opacity-50 md:blur-[1px]'}`}
         >
-            <Quote className="absolute top-8 right-8 w-12 h-12 text-gray-100 fill-gray-100" />
+            <Quote className="absolute top-4 right-4 sm:top-6 sm:right-6 md:top-8 md:right-8 w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-gray-100 fill-gray-100" />
 
             <div className="relative z-10">
-                <h3 className="text-blue-500 font-semibold text-lg mb-6">{testimonial.title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed mb-8">
+                <h3 className="text-blue-500 font-semibold text-base sm:text-lg mb-4 sm:mb-6">{testimonial.title}</h3>
+                <p className="text-gray-500 text-sm sm:text-sm leading-relaxed mb-6 sm:mb-8">
                     {testimonial.text}
                 </p>
 
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3 sm:gap-4">
                     <img
                         src={testimonial.image}
                         alt={testimonial.name}
-                        className="w-16 h-16 object-cover bg-gray-200 rounded-full"
+                        className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 object-cover bg-gray-200 rounded-full flex-shrink-0"
                     />
-                    <div>
-                        <h4 className="font-bold text-dark text-lg">{testimonial.name}</h4>
-                        <p className="text-gray-500 text-sm">{testimonial.role}</p>
+                    <div className="min-w-0 flex-1">
+                        <h4 className="font-bold text-dark text-sm sm:text-base md:text-lg truncate">{testimonial.name}</h4>
+                        <p className="text-gray-500 text-xs sm:text-sm truncate">{testimonial.role}</p>
                     </div>
                 </div>
             </div>
@@ -87,9 +87,27 @@ const TestimonialCarousel = () => {
 
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isTransitioning, setIsTransitioning] = useState(true);
+    const [cardsPerView, setCardsPerView] = useState(3);
 
-    // Clone first 3 items to append to end for infinite scroll effect
-    const extendedTestimonials = [...testimonials, ...testimonials.slice(0, 3)];
+    // Update cards per view based on screen size
+    useEffect(() => {
+        const updateCardsPerView = () => {
+            if (window.innerWidth < 640) {
+                setCardsPerView(1); // Mobile: 1 card
+            } else if (window.innerWidth < 1024) {
+                setCardsPerView(2); // Tablet: 2 cards
+            } else {
+                setCardsPerView(3); // Desktop: 3 cards
+            }
+        };
+
+        updateCardsPerView();
+        window.addEventListener('resize', updateCardsPerView);
+        return () => window.removeEventListener('resize', updateCardsPerView);
+    }, []);
+
+    // Clone first items to append to end for infinite scroll effect
+    const extendedTestimonials = [...testimonials, ...testimonials.slice(0, cardsPerView)];
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -125,16 +143,16 @@ const TestimonialCarousel = () => {
 
     return (
         <div className="w-full mb-12">
-            <div className="overflow-hidden w-full py-10"> {/* Added py-10 for shadow/scale space */}
+            <div className="overflow-hidden w-full py-6 sm:py-8 md:py-10 px-4 sm:px-0"> {/* Responsive padding for shadow/scale space */}
                 <div
                     className={`flex ${isTransitioning ? 'transition-transform duration-700 ease-in-out' : ''}`}
-                    style={{ transform: `translateX(-${currentIndex * (100 / 3)}%)` }}
+                    style={{ transform: `translateX(-${currentIndex * (100 / cardsPerView)}%)` }}
                 >
                     {extendedTestimonials.map((testimonial, index) => (
-                        <div key={index} className="w-1/3 flex-shrink-0 px-4">
+                        <div key={index} className={`${cardsPerView === 1 ? 'w-full' : cardsPerView === 2 ? 'w-1/2' : 'w-1/3'} flex-shrink-0 ${cardsPerView === 1 ? 'px-0' : 'px-1 sm:px-2 md:px-4'}`}>
                             <TestimonialCard
                                 testimonial={testimonial}
-                                isActive={index === currentIndex + 1}
+                                isActive={index === Math.floor(currentIndex + cardsPerView / 2)}
                             />
                         </div>
                     ))}
@@ -142,7 +160,7 @@ const TestimonialCarousel = () => {
             </div>
 
             {/* Pagination Dots */}
-            <div className="flex justify-center items-center gap-2 mt-12">
+            <div className="flex justify-center items-center gap-2 sm:gap-3 mt-8 sm:mt-12 px-4">
                 {testimonials.map((_, i) => (
                     <button
                         key={i}
@@ -150,8 +168,9 @@ const TestimonialCarousel = () => {
                             setIsTransitioning(true);
                             setCurrentIndex(i);
                         }}
-                        className={`h-2 rounded-full transition-all duration-300 ${(currentIndex % testimonials.length) === i ? 'w-8 bg-blue-600' : 'w-2 bg-blue-200'
+                        className={`h-2 sm:h-3 rounded-full transition-all duration-300 touch-manipulation ${(currentIndex % testimonials.length) === i ? 'w-8 sm:w-10 bg-blue-600' : 'w-2 sm:w-3 bg-blue-200'
                             }`}
+                        aria-label={`Go to testimonial ${i + 1}`}
                     />
                 ))}
             </div>
@@ -166,9 +185,16 @@ const Home = () => {
         const fetchJobs = async () => {
             try {
                 const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/jobs`);
-                setJobs(res.data.slice(0, 6)); // Show top 6 jobs
+                // Ensure res.data is an array before calling slice
+                if (Array.isArray(res.data)) {
+                    setJobs(res.data.slice(0, 6)); // Show top 6 jobs
+                } else {
+                    console.warn('API response is not an array:', res.data);
+                    setJobs([]); // Set empty array as fallback
+                }
             } catch (err) {
-                console.error(err);
+                console.error('Error fetching jobs:', err);
+                setJobs([]); // Set empty array on error
             }
         };
         fetchJobs();
@@ -341,7 +367,7 @@ const Home = () => {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {jobs.length > 0 ? (
+                        {Array.isArray(jobs) && jobs.length > 0 ? (
                             jobs.slice(0, 6).map((job, index) => (
                                 <Link to={`/jobs/${job._id}`} key={job._id || index} className="block bg-white rounded-xl p-6 border border-gray-100 hover:shadow-lg transition-all group relative">
                                     <div className="flex items-start gap-4">
@@ -476,11 +502,11 @@ const Home = () => {
             </div>
 
             {/* Testimonials Section */}
-            <div className="py-20 bg-[#f8faff] overflow-hidden">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-16">
-                        <h2 className="text-3xl font-bold text-dark mb-4">Testimonials From Our Customers</h2>
-                        <p className="text-gray-500">Don't trust us right away, see what our customers have to say!</p>
+            <div className="py-12 sm:py-16 md:py-20 bg-[#f8faff] overflow-hidden">
+                <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+                    <div className="text-center mb-8 sm:mb-12 md:mb-16">
+                        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-dark mb-3 sm:mb-4 px-2 sm:px-0">Testimonials From Our Customers</h2>
+                        <p className="text-gray-500 text-sm sm:text-base px-4 sm:px-0">Don't trust us right away, see what our customers have to say!</p>
                     </div>
                 </div>
 
