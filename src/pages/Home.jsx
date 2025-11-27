@@ -520,7 +520,7 @@ const Home = () => {
                         {/* Image Side */}
                         <div className="w-full md:w-1/2 relative h-[400px] md:h-[500px]">
                             <img
-                                src="/src/assets/hire-people.png"
+                                src="/assets/hire-people.png"
                                 alt="Professionals"
                                 className="absolute bottom-0 left-1/2 -translate-x-1/2 h-full object-contain object-bottom"
                             />
